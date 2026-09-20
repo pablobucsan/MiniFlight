@@ -1,0 +1,26 @@
+\contentsline {section}{\numberline {1}Introduction \& Motivation}{2}{section.1}%
+\contentsline {section}{\numberline {2}Overall Architecture}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}High-level data paths}{2}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Frozen Module List and Responsibilities}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Software Bus}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Scheduler}{3}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Command Manager}{3}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Telemetry Manager}{3}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}GNC (Guidance, Navigation \& Control)}{4}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Health Manager}{4}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Memory Manager}{4}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Instrument Manager}{5}{subsection.3.8}%
+\contentsline {subsection}{\numberline {3.9}Drivers Layer}{5}{subsection.3.9}%
+\contentsline {subsection}{\numberline {3.10}Instruments}{5}{subsection.3.10}%
+\contentsline {subsection}{\numberline {3.11}Communication Interface}{5}{subsection.3.11}%
+\contentsline {section}{\numberline {4}Message Catalogue}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Design rationale}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Common message header}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Command field}{6}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}What is intentionally omitted}{7}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Future extension points}{7}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Scheduling \& Execution Model}{7}{section.5}%
+\contentsline {section}{\numberline {6}Build \& Run Instructions}{7}{section.6}%
+\contentsline {section}{\numberline {7}Demonstration Scenarios}{7}{section.7}%
+\contentsline {section}{\numberline {8}Limitations \& Future Work}{7}{section.8}%
+\contentsline {section}{\numberline {9}Conclusion}{8}{section.9}%

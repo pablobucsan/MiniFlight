@@ -1,0 +1,338 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    urlcolor=blue!60!black,
+    citecolor=blue!60!black
+}
+
+% Header / Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Flight Software Simulation}
+\fancyhead[R]{Design Document}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Title
+\title{%
+    \vspace{-1cm}
+    \textbf{Flight Software Simulation}\\[0.4em]
+    \Large Software-Bus Architecture for a Simplified Avionics System\\[0.6em]
+    \large Design Document
+}
+\author{Pablo Buceta Santos}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+%----------------------------------------------------------------------
+\section{Introduction \& Motivation}
+%----------------------------------------------------------------------
+
+This document describes the design of a \textbf{software-bus-based flight software simulation} developed as a personal project in preparation for a Flight Software Engineer interview at Rocket Lab (Electron).
+
+The simulation implements a classic spacecraft avionics architecture centred on a Software Bus. Its purpose is to explore and demonstrate the interactions between typical flight-software components (command handling, telemetry, GNC, health monitoring, scheduling, etc.) in a clean, well-structured C codebase.
+
+\textbf{Important scope statement:}
+This is an \emph{architectural and functional simulation}, not a flight-ready or hard-real-time system. It prioritises clarity of component boundaries, message flows and design decisions over real-time guarantees, redundancy or certification artefacts.
+
+%----------------------------------------------------------------------
+\section{Overall Architecture}
+%----------------------------------------------------------------------
+
+The system follows a classic \textbf{software-bus} (publish/subscribe) architecture commonly found in spacecraft flight software.
+
+\begin{center}
+% Placeholder for architecture diagram
+\textit{[Architecture diagram -- to be inserted]}
+\end{center}
+
+All major components communicate exclusively through a central \textbf{Software Bus}. This decouples producers from consumers and makes the data flow explicit and inspectable.
+
+\subsection{High-level data paths}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Command path:} External world $\rightarrow$ Communication Interface $\rightarrow$ Command Manager $\rightarrow$ Software Bus $\rightarrow$ target component(s)
+    \item \textbf{Telemetry path:} Components / Instruments $\rightarrow$ Telemetry Manager $\rightarrow$ Software Bus $\rightarrow$ Communication Interface $\rightarrow$ External world
+    \item \textbf{Health path:} Components publish heartbeats / status $\rightarrow$ Health Manager $\rightarrow$ Software Bus (alerts / safe-mode flags)
+    \item \textbf{Control path:} GNC subscribes to sensor data and commands, publishes control outputs and vehicle state
+\end{itemize}
+
+%----------------------------------------------------------------------
+\section{Frozen Module List and Responsibilities}
+%----------------------------------------------------------------------
+
+The following module list is considered \textbf{frozen} for the first complete version of the simulation. Responsibilities may be refined in wording, but the set of modules and their primary duties will not change.
+
+\subsection{Software Bus}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Central communication backbone of the system.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Provide a publish/subscribe (or typed message) interface.
+        \item Route messages from publishers to all current subscribers of a given topic / message type.
+        \item Guarantee in-order delivery within a single topic for the simulation (best-effort is acceptable).
+        \item Allow components to register and deregister subscriptions at start-up (dynamic subscription is optional).
+        \item Provide a simple, deterministic API usable from pure C.
+    \end{itemize}
+    \item[Non-responsibilities] Message persistence across restarts, network distribution, prioritisation beyond simple ordering.
+\end{description}
+
+\subsection{Scheduler}
+\subsubsection*{Primary role}
+Drive the temporal behaviour of the simulation.
+\subsubsection*{Responsibilities}
+\begin{itemize}
+\item Maintain a simple cyclic executive or priority-based dispatch loop.
+\item Call each component's periodic ``tick'' function at a defined rate (or deliver pending messages).
+\item Support both periodic tasks and aperiodic / event-driven work.
+\item Provide a global simulation time source.
+\item Allow the system to be stepped (useful for deterministic demos and testing).
+\end{itemize}
+\subsubsection*{Non-responsibilities}
+Hard real-time guarantees, multi-core scheduling, deadline miss recovery.
+
+\subsection{Command Manager}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Entry point and validator for all telecommands.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Receive raw commands from the Communication Interface.
+        \item Perform basic validation (opcode range, parameter length, simple sanity checks).
+        \item Translate validated commands into internal bus messages.
+        \item Publish command messages onto the Software Bus for the intended destination component(s).
+        \item Optionally keep a short command history / log for debugging.
+    \end{itemize}
+    \item[Non-responsibilities] Complex authentication, encryption, or long-term command storage.
+\end{description}
+
+\subsection{Telemetry Manager}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Collection, packaging and egress of telemetry.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Subscribe to telemetry-related topics on the Software Bus.
+        \item Aggregate or sample data from multiple producers.
+        \item Package telemetry into well-defined packets (or frames).
+        \item Forward packaged telemetry to the Communication Interface.
+        \item Support basic filtering or rate limiting if needed for demos.
+    \end{itemize}
+    \item[Non-responsibilities] On-board storage of large telemetry archives, complex CCSDS framing (can be added later).
+\end{description}
+
+\subsection{GNC (Guidance, Navigation \& Control)}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Maintain a simplified vehicle state and produce control outputs.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Subscribe to relevant sensor data and telecommands.
+        \item Maintain a minimal internal state vector (position, velocity, attitude, or a reduced subset).
+        \item Run a simple control law or guidance algorithm (even a trivial proportional controller is acceptable for v1).
+        \item Publish vehicle state and control commands onto the bus.
+        \item Expose key state variables as telemetry.
+    \end{itemize}
+    \item[Non-responsibilities] High-fidelity orbital dynamics, Kalman filtering, or production-grade GNC algorithms.
+\end{description}
+
+\subsection{Health Manager}
+\subsubsection*{Primary role}
+System health monitoring and basic fault awareness.
+\subsubsection*{Responsibilities}
+\begin{itemize}
+\item Subscribe to heartbeat / status messages from other components.
+\item Detect missing heartbeats or explicit error flags.
+\item Maintain an overall system health state (e.g. nominal / degraded / safe).
+\item Publish health status and alerts onto the Software Bus.
+\item Optionally trigger a simple safe-mode reaction (e.g. inhibit actuators).
+\end{itemize}
+\subsubsection*{Non-responsibilities}
+Full FDIR (Fault Detection, Isolation and Recovery), redundant voting, or permanent failure logging.
+
+\subsection{Memory Manager}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Controlled memory allocation and usage tracking for the simulation.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Provide a simple deterministic allocator or memory pools for components that need dynamic memory.
+        \item Track total and per-component memory usage.
+        \item Publish memory statistics as telemetry.
+        \item Detect and report allocation failures to the Health Manager.
+    \end{itemize}
+    \item[Non-responsibilities] Full heap implementation with fragmentation handling of production quality, virtual memory, or MMU simulation.
+\end{description}
+
+\subsection{Instrument Manager}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] High-level abstraction and coordination of instruments.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Translate bus messages into driver-level requests.
+        \item Aggregate data from multiple instruments when needed.
+        \item Enforce simple instrument mode management (on/off, standby, etc.).
+        \item Publish instrument data and status onto the Software Bus.
+    \end{itemize}
+    \item[Non-responsibilities] Direct hardware register access (this belongs to the Drivers Layer).
+\end{description}
+
+\subsection{Drivers Layer}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Low-level simulated device drivers.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Implement a thin interface that looks like a hardware driver (init, read, write, ioctl-style).
+        \item Interact with the simulated Instruments.
+        \item Perform basic error injection if requested (for health-manager demos).
+        \item Remain as simple and deterministic as possible.
+    \end{itemize}
+    \item[Non-responsibilities] Real device drivers, interrupt simulation, or DMA.
+\end{description}
+
+\subsection{Instruments}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Simulated sensors and actuators.
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Produce plausible sensor data (IMU, simple GPS-like position, temperature, etc.) or accept actuator commands.
+        \item Support basic failure modes (stuck value, noise, complete failure) for demonstration purposes.
+        \item Be driven exclusively through the Drivers Layer.
+    \end{itemize}
+    \item[Non-responsibilities] High-fidelity physical models or visual simulation.
+\end{description}
+
+\subsection{Communication Interface}
+\begin{description}[style=nextline, leftmargin=1.5em]
+    \item[Primary role] Boundary between the flight software and the external world (``ground'').
+    \item[Responsibilities]
+    \begin{itemize}
+        \item Accept telecommands from an external source (TCP socket, named pipe, or stdin for early demos).
+        \item Deliver telemetry packets to the external world.
+        \item Perform minimal framing / de-framing if needed.
+        \item Remain replaceable so that different transport mechanisms can be swapped later.
+    \end{itemize}
+    \item[Non-responsibilities] Full CCSDS TM/TC stacks, encryption, or authentication.
+\end{description}
+
+%----------------------------------------------------------------------
+\section{Message Catalogue}
+%----------------------------------------------------------------------
+
+This section defines the internal message format used on the Software Bus. The format is deliberately simpler than a full CCSDS Space Packet while still retaining the concepts that are educationally valuable for a flight-software simulation.
+
+\subsection{Design rationale}
+
+Internal bus messages only travel between components inside the simulation. They do not cross a radio link. Consequently they prioritise clarity, ease of construction, and low overhead over full protocol compliance.
+
+A richer, CCSDS-inspired layout may later be introduced at the Communication Interface when messages leave the system toward the ``ground''. That framing is considered out of scope for the first version of the internal bus.
+
+\subsection{Common message header}
+
+Every message carried by the Software Bus contains the following fields:
+
+\begin{center}
+\begin{tabular}{@{}llp{8cm}@{}}
+\toprule
+\textbf{Field} & \textbf{Purpose} & \textbf{Notes} \\
+\midrule
+Type            & Distinguishes the nature of the message & Examples: Command, Telemetry, Health, \ldots \\
+Topic           & Routing key used by the Software Bus   & The primary value the bus matches against subscriptions \\
+Source          & Identifier of the publishing component & Useful for debugging, health monitoring and tracing \\
+Sequence number & Per-source (or per-topic) counter      & Helps detect gaps or reordering during demos \\
+Length          & Size of the payload in bytes           & Required for variable-length payloads \\
+Command field   & Action specifier for command messages  & Present when Type = Command; indicates the requested action \\
+Payload         & Message-specific data                  & Interpretation depends on Topic and Type \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Command field}
+
+The Command field is kept as a distinct member of the common header rather than being buried inside the payload. Its purpose is to name the action the receiving component should perform (for example ``set mode'', ``fire thruster'', ``reset counters'', etc.).
+
+This separation makes command handling clearer: a component can inspect the Command field first and then interpret the payload according to that action. Telemetry and health messages leave this field unused or set to a neutral value.
+
+\subsection{What is intentionally omitted}
+
+The following CCSDS-style elements are \emph{not} part of the internal message format:
+
+\begin{itemize}
+    \item Version number and secondary-header flags
+    \item Full Application Process ID (APID) bit-packing
+    \item Long telemetry secondary headers
+    \item Checksums or authentication fields
+\end{itemize}
+
+These may appear later in an external packet format produced by the Communication Interface, but they are not required for component-to-component communication inside the simulation.
+
+\subsection{Future extension points}
+
+The header is expected to remain stable for the first complete version of the simulation. Possible later additions (explicitly optional) include a timestamp field or a simple flags word. Any such addition will be documented here before it is introduced in code.
+
+%----------------------------------------------------------------------
+\section{Scheduling \& Execution Model}
+%----------------------------------------------------------------------
+
+\textit{(To be filled once the Scheduler design is finalised.)}
+
+%----------------------------------------------------------------------
+\section{Build \& Run Instructions}
+%----------------------------------------------------------------------
+
+\textit{(To be completed when the repository skeleton exists.)}
+
+%----------------------------------------------------------------------
+\section{Demonstration Scenarios}
+%----------------------------------------------------------------------
+
+Planned scenarios (subject to refinement):
+
+\begin{enumerate}
+    \item Nominal command $\rightarrow$ actuation $\rightarrow$ telemetry path.
+    \item Simple GNC closed-loop behaviour.
+    \item Heartbeat loss detected by Health Manager.
+    \item Memory allocation pressure / failure reporting.
+    \item Instrument failure injection and resulting health alert.
+\end{enumerate}
+
+%----------------------------------------------------------------------
+\section{Limitations \& Future Work}
+%----------------------------------------------------------------------
+
+\begin{itemize}
+    \item Single-process, non-real-time simulation on Linux.
+    \item Simplified GNC and instrument models.
+    \item No redundancy, voting, or formal FDIR.
+    \item No network distribution of the Software Bus.
+\end{itemize}
+
+Possible future extensions (explicitly out of current scope): multi-process version, basic RTOS integration, more realistic dynamics, CCSDS-inspired framing, etc.
+
+%----------------------------------------------------------------------
+\section{Conclusion}
+%----------------------------------------------------------------------
+
+\textit{(To be written at the end of the project.)}
+
+\end{document}
