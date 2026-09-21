@@ -27,7 +27,7 @@ typedef struct HealthManager{
 }HealthManager;
 
 
-void init_health_cmpnt(SchedulerSystem *schdlr_sys);
+void init_health_cmpnt();
 void health_cmpnt_tick();
 
 #endif //HEALTH_H

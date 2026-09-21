@@ -25,9 +25,9 @@ typedef struct Component Component;
  }SchedulerSystem;
 
 
-SchedulerSystem *init_schdlr_sys();
-void schdlr_sys_log_cmpnt(SchedulerSystem *schdlr_sys, Component *component);
-void schdlr_sys_tick_cmpnts(SchedulerSystem *schdlr_sys);
+void init_schdlr_sys();
+void schdlr_sys_log_cmpnt(Component *component);
+void schdlr_sys_tick_cmpnts();
 
 #endif //SCHEDULER_H
 

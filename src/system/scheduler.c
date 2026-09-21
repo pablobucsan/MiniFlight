@@ -11,7 +11,7 @@
 
 static SchedulerSystem *schdlr_sys = NULL;
 
-SchedulerSystem *init_schdlr_sys()
+void init_schdlr_sys()
 {
     schdlr_sys = mem_sys_alloc(sizeof(SchedulerSystem));
     if (schdlr_sys == NULL){
@@ -27,12 +27,10 @@ SchedulerSystem *init_schdlr_sys()
 
     schdlr_sys->ncomponents = 0;
     printf("[SCHEDULER SYSTEM] - ALIVE\n");
-
-    return schdlr_sys;
 }   
 
 
-void schdlr_sys_log_cmpnt(SchedulerSystem *schdlr_sys, Component *component)
+void schdlr_sys_log_cmpnt(Component *component)
 {
     if (schdlr_sys == NULL){
         printf("[SCHEDULER SYSTEM] - Cannot log a component onto a NULL scheduler\n");
@@ -57,7 +55,7 @@ void schdlr_sys_log_cmpnt(SchedulerSystem *schdlr_sys, Component *component)
 }
 
 
-void schdlr_sys_tick_cmpnts(SchedulerSystem *schdlr_sys)
+void schdlr_sys_tick_cmpnts()
 {
     if (schdlr_sys == NULL){
         printf("[SCHEDULER SYSTEM] - Scheduler System is NULL. Cannot tick components\n");
@@ -81,7 +79,7 @@ void schdlr_sys_tick_cmpnts(SchedulerSystem *schdlr_sys)
             printf("[SCHEDULER SYSTEM] - Current component to tick is NULL\n");
             continue;
         }
-        component->tick();
+        component->tick(component);
         sleep(1);
     }
 }

@@ -16,7 +16,7 @@ typedef enum ComponentType{
 typedef struct Component{
     ComponentType cmpnt_type;
     void (*init)(SchedulerSystem *schdlr_sys);
-    void (*tick)();
+    void (*tick)(Component *cmpnt);
     void (*shutdown)();
     union{
         HealthManager *health_mng;

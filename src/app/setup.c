@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 
-SchedulerSystem *initialise()
+void initialise()
 {
     /** INIT MEMORY POOL FOR THE PROGRAM */
     void *start_p = malloc(VEHICLE_MEMORY);
@@ -23,16 +23,14 @@ SchedulerSystem *initialise()
     init_mem_sys(start_p);
 
     /** CREATE THE SCHEDULER */
-    SchedulerSystem *schdlr_sys = init_schdlr_sys();
+    init_schdlr_sys();
 
     /** CREATE EVERY OTHER COMPONENT AND SELF REGISTER WITH THE SCHEDULER */
-    init_health_cmpnt(schdlr_sys);
-
-    return schdlr_sys;
+    init_health_cmpnt();
 }
 
 void run()
 {
-    SchedulerSystem *schdlr_sys = initialise();
-    schdlr_sys_tick_cmpnts(schdlr_sys);
+    initialise();
+    schdlr_sys_tick_cmpnts();
 }
