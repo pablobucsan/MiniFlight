@@ -124,7 +124,7 @@ void instruments_cmpnt_tick(Component *instruments_cmpnt)
     thermal_msg_packet->msg_id = MSG_ID_INSTRMNT_THERMAL;
     thermal_msg_packet->cmpnt_id = instruments_cmpnt->cmpnt_id;
     thermal_msg_packet->sqn_number = instruments_cmpnt->instruments_mng->thermal_sqn_number;
-    thermal_msg_packet->length = sizeof(IMU_Packet);
+    thermal_msg_packet->length = sizeof(Thermal_Packet);
     thermal_msg_packet->cmd = 0;
     mem_sys_copy(thermal_msg_packet->payload, thermal_packet, sizeof(Thermal_Packet));
 
