@@ -6,6 +6,8 @@
 #include "../../include/system/memory.h"
 #include "../../include/system/scheduler.h"
 #include "../../include/components/health.h"
+#include "../../include/components/instruments.h"
+#include "../../include/bus/sw_bus.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -19,14 +21,18 @@ void initialise()
         exit(1);
     }
 
-    /** CREATE THE MEMORY SYSTEM MODULE */
+    /** CREATE THE MEMORY SYSTEM */
     init_mem_sys(start_p);
 
     /** CREATE THE SCHEDULER */
     init_schdlr_sys();
 
-    /** CREATE EVERY OTHER COMPONENT AND SELF REGISTER WITH THE SCHEDULER */
+    /** CREATE THE SOFTWARE BUS */
+    init_swbus();
+    
+    /** CREATE EVERY OTHER COMPONENT, SELF REGISTER WITH THE SCHEDULER AND LOG ITSELF TO THE SOFTWARE BUS SUBSCRIPTIONS TABLE*/
     init_health_cmpnt();
+    init_instruments_cmpnt();
 }
 
 void run()

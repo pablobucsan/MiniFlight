@@ -21,7 +21,7 @@ typedef struct Component Component;
 
  typedef struct SchedulerSystem{
     size_t ncomponents;
-    Component **components;
+    Component *components[MAX_COMPONENTS];
  }SchedulerSystem;
 
 

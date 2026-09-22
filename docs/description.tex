@@ -257,9 +257,9 @@ Every message carried by the Software Bus contains the following fields:
 \textbf{Field} & \textbf{Purpose} & \textbf{Notes} \\
 \midrule
 Type            & Distinguishes the nature of the message & Examples: Command, Telemetry, Health, \ldots \\
-Topic           & Routing key used by the Software Bus   & The primary value the bus matches against subscriptions \\
-Source          & Identifier of the publishing component & Useful for debugging, health monitoring and tracing \\
-Sequence number & Per-source (or per-topic) counter      & Helps detect gaps or reordering during demos \\
+Message ID           & Routing key used by the Software Bus   & The primary value the bus matches against subscriptions \\
+App ID      & Identifier of the publishing component & Useful for debugging, health monitoring and tracing \\
+Timestamp \& Sequence number & Per-source (or per-topic) counter      & Helps detect gaps or reordering during demos \\
 Length          & Size of the payload in bytes           & Required for variable-length payloads \\
 Command field   & Action specifier for command messages  & Present when Type = Command; indicates the requested action \\
 Payload         & Message-specific data                  & Interpretation depends on Topic and Type \\
