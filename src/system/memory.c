@@ -3,6 +3,7 @@
 #include "../../include/common/comps.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 
@@ -24,7 +25,8 @@ void init_mem_sys(void *start_address)
 }
 
 /**
- * Simple bump allocator for now
+ * Simple bump allocator for things that are always in memory. 
+ * It zeroes the memory
  */
 void *mem_sys_alloc(size_t size)
 {  
@@ -40,11 +42,41 @@ void *mem_sys_alloc(size_t size)
 
     void *result_p = mem_sys->next_free_p;
 
-    //printf("[MEMORY SYSTEM] - Successful allocation of %zu bytes, old p: 0x%p, new p: 0x%p\n", size, result_p, (char *)result_p + size);
-
-
     mem_sys->memory_left -= size;
     mem_sys->next_free_p = (char *)mem_sys->next_free_p + size;
     
+    memset(result_p, 0, size);
+
     return result_p;
+}
+
+
+/**
+ * Allocate a buffer of size 'size' for components to hold onto and recycle
+ */
+
+MemoryBuffer *mem_sys_create_buffer(size_t size)
+{
+    MemoryBuffer *mem_buffer = mem_sys_alloc(sizeof(MemoryBuffer) + size);
+    if (!mem_buffer) {
+        printf("[MEMORY SYSTEM] - Failed to allocate memory buffer\n");
+        exit(1);
+    }
+
+    mem_buffer->size = size;
+    mem_buffer->taken = 0;
+    /** mem_buffer->buffer points directly to the chunk of memory of requested size */
+    return mem_buffer; 
+}
+
+/** Copy N bytes of a memory chunk onto another */
+void mem_sys_copy(void *dst, void *src, size_t n)
+{
+    memcpy(dst, src, n);
+}   
+
+/** Fills the first N bytes of the memory area pointed by p with the constant c */
+void mem_sys_set(void *p, int c, size_t n)
+{
+    memset(p,c,n);
 }

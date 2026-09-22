@@ -13,9 +13,14 @@
  */
 
 
+typedef struct MemoryBuffer MemoryBuffer;
+
 
 typedef struct InstrumentsManager{
-    int state;
+    MemoryBuffer *imu_packet_buffer;
+    MemoryBuffer *thermal_packet_buffer;
+    int imu_sqn_number;
+    int thermal_sqn_number;
 }InstrumentsManager;
 
 void init_instruments_cmpnt();

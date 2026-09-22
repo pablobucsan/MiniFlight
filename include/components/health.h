@@ -15,6 +15,7 @@
  */
 
 typedef struct SchedulerSystem SchedulerSystem;
+typedef struct MemoryBuffer MemoryBuffer;
 
 typedef enum HealthState{
     HEALTH_NOMINAL,
@@ -22,8 +23,14 @@ typedef enum HealthState{
     HEALTH_SAFE
 }HealthState;
 
+typedef struct Health_Packet{
+    HealthState imu_state;
+    HealthState thermal_state;
+}Health_Packet;
+
 typedef struct HealthManager{
-    HealthState state;
+    int sqn_number;
+    MemoryBuffer *health_packet_buffer;
 }HealthManager;
 
 

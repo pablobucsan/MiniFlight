@@ -12,9 +12,9 @@ typedef struct Component Component;
 
 typedef enum MessageID{
     MSG_ID_NONE = 0x0,
-    MSG_ID_HEALTH_1 = 0x1,
-    MSG_ID_HEALTH_2 = 0x2,
-    MSG_ID_HEALTH_3 = 0x3
+    MSG_ID_HEALTH_INSTRMNT = 0x1,
+    MSG_ID_INSTRMNT_IMU = 0x2,
+    MSG_ID_INSTRMNT_THERMAL = 0x3,
 }MessageID;
 
 

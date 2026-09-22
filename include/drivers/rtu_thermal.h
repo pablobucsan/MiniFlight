@@ -5,7 +5,6 @@
 
 #include <stdint.h>
 
-#define IMU_INT_TO_FLOAT 0.0625
 
 
 /** 
