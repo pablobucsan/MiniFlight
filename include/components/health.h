@@ -14,8 +14,13 @@
  * Optionally trigger a simple safe-mode reaction (inhibit actuators)
  */
 
+#define HEALTH_Q_SIZE 3
+
+#include "../common/message.h"
+#include "../common/mem_chunk.h"
+#include <stdint.h>
+
 typedef struct SchedulerSystem SchedulerSystem;
-typedef struct MemoryBuffer MemoryBuffer;
 
 typedef enum HealthState{
     HEALTH_NOMINAL,
@@ -29,8 +34,9 @@ typedef struct Health_Packet{
 }Health_Packet;
 
 typedef struct HealthManager{
-    int sqn_number;
-    MemoryBuffer *health_packet_buffer;
+    uint16_t sqn_number;
+    MemoryChunk chunk;
+    uint8_t raw_data[MAX_TELEMETRY_PAYLOAD_SIZE];
 }HealthManager;
 
 

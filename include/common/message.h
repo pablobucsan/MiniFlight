@@ -6,6 +6,20 @@
 
 #define MAX_SQN_NUMBER 32
 
+#define MAX_TELEMETRY_PAYLOAD_SIZE 512
+
+
+/**
+ * This would the max of all the msg type sizes
+ */
+#define MAX_MSG_PACKET_SIZE 1024
+
+typedef enum MessageID{
+    MSG_ID_NONE = 0x0,
+    MSG_ID_HEALTH_INSTRMNT = 0x1,
+    MSG_ID_INSTRMNT_IMU = 0x2,
+    MSG_ID_INSTRMNT_THERMAL = 0x3,
+}MessageID;
 
 typedef enum Msg_Type{
     MSG_TYPE_NONE,
@@ -46,15 +60,24 @@ typedef enum Msg_Type{
  * 
  */
 
+/** 
+ * 
+ * 
+ */
 
-typedef struct Msg_Packet{
+typedef struct Msg_Packet_H{
     uint16_t length;
     uint16_t sqn_number;
     uint8_t type;
     uint8_t msg_id;
     uint8_t cmpnt_id;
     uint8_t cmd;
-    uint8_t payload[];
+}Msg_Packet_H;
+
+
+typedef struct Msg_Packet{
+    Msg_Packet_H header;
+    uint8_t payload[MAX_MSG_PACKET_SIZE];
 }Msg_Packet;
 
 

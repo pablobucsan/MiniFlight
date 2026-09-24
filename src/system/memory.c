@@ -45,28 +45,9 @@ void *mem_sys_alloc(size_t size)
     mem_sys->memory_left -= size;
     mem_sys->next_free_p = (char *)mem_sys->next_free_p + size;
     
-    memset(result_p, 0, size);
+    mem_sys_set(result_p, 0, size);
 
     return result_p;
-}
-
-
-/**
- * Allocate a buffer of size 'size' for components to hold onto and recycle
- */
-
-MemoryBuffer *mem_sys_create_buffer(size_t size)
-{
-    MemoryBuffer *mem_buffer = mem_sys_alloc(sizeof(MemoryBuffer) + size);
-    if (!mem_buffer) {
-        printf("[MEMORY SYSTEM] - Failed to allocate memory buffer\n");
-        exit(1);
-    }
-
-    mem_buffer->size = size;
-    mem_buffer->taken = 0;
-    /** mem_buffer->buffer points directly to the chunk of memory of requested size */
-    return mem_buffer; 
 }
 
 /** Copy N bytes of a memory chunk onto another */
@@ -80,3 +61,4 @@ void mem_sys_set(void *p, int c, size_t n)
 {
     memset(p,c,n);
 }
+

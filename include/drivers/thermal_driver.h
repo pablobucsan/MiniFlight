@@ -16,7 +16,7 @@
 
 #define THERMAL_INT_TO_FLOAT 0.0625
 
-typedef struct MemoryBuffer MemoryBuffer;
+typedef struct MemoryChunk MemoryChunk;
 
 
 typedef struct Thermal_Packet{
@@ -25,6 +25,6 @@ typedef struct Thermal_Packet{
 }Thermal_Packet;
 
 
-Thermal_Packet *thermal_driver_read(MemoryBuffer *thermal_packet_buffer);
+void thermal_driver_read(MemoryChunk *thermal_chunk);
 
 #endif //THERMAL_DRIVER_H

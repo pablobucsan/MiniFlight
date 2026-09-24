@@ -7,7 +7,6 @@
 #include "rtu_imu.h"
 
 
-
 /**
  * DOCUMENTATION:
  * Assume virtual microcontroller has up to 
@@ -24,7 +23,7 @@
 
  #define IMU_INT_TO_FLOAT 0.0625
 
-typedef struct MemoryBuffer MemoryBuffer;
+typedef struct MemoryChunk MemoryChunk;
 
 
 
@@ -34,7 +33,7 @@ typedef struct IMU_Packet{
 }IMU_Packet;
 
 
-IMU_Packet *imu_driver_read(MemoryBuffer *imu_packet_buffer);
+void imu_driver_read(MemoryChunk *imu_chunk);
 
 
 #endif //IMU_DRIVER_H

@@ -31,12 +31,13 @@ void initialise()
     init_swbus();
     
     /** CREATE EVERY OTHER COMPONENT, SELF REGISTER WITH THE SCHEDULER AND LOG ITSELF TO THE SOFTWARE BUS SUBSCRIPTIONS TABLE*/
-    init_health_cmpnt();
     init_instruments_cmpnt();
+    init_health_cmpnt();
 }
 
 void run()
 {
     initialise();
+    printf("============= Init finished. About to tick components ========\n");
     schdlr_sys_tick_cmpnts();
 }

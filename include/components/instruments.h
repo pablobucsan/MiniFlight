@@ -12,13 +12,16 @@
  * Publish intrument data and status onto the Software Bus
  */
 
+#include "../common/message.h"
+#include "../common/mem_chunk.h"
 
-typedef struct MemoryBuffer MemoryBuffer;
+#define INSTRMNT_Q_SIZE 3
+
 
 
 typedef struct InstrumentsManager{
-    MemoryBuffer *imu_packet_buffer;
-    MemoryBuffer *thermal_packet_buffer;
+    MemoryChunk chunk;
+    uint8_t raw_data[MAX_TELEMETRY_PAYLOAD_SIZE];
     int imu_sqn_number;
     int thermal_sqn_number;
 }InstrumentsManager;
