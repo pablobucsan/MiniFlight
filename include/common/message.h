@@ -2,12 +2,11 @@
 #define MESSAGE_H
 
 #include <stdint.h>
+#include <stddef.h>
 
-
-#define MAX_SQN_NUMBER 32
 
 #define MAX_TELEMETRY_PAYLOAD_SIZE 512
-
+#define MAX_COMMAND_PAYLOAD_SIZE 512
 
 /**
  * This would the max of all the msg type sizes
@@ -40,7 +39,7 @@ typedef enum Msg_Type{
  * |    App ID (4 bits) - Identifier of the publisher cmpnt (16 IDs)  |
  * |------------------------------------------------------------------|
  * |   Timestamp & Sequence number (per-source / per- topic counter)  |
- * |       (16 bits) - Helps detect gaps or reordering during demos   |
+ * |       (32 bits) - Helps detect gaps or reordering during demos   |
  * |------------------------------------------------------------------|
  * |                 Length (16 bits) - Size of the payload           |
  * |------------------------------------------------------------------|
@@ -66,8 +65,8 @@ typedef enum Msg_Type{
  */
 
 typedef struct Msg_Packet_H{
+    uint32_t sqn_number;
     uint16_t length;
-    uint16_t sqn_number;
     uint8_t type;
     uint8_t msg_id;
     uint8_t cmpnt_id;
@@ -80,5 +79,5 @@ typedef struct Msg_Packet{
     uint8_t payload[MAX_MSG_PACKET_SIZE];
 }Msg_Packet;
 
-
+size_t msg_pkt_read_payload(Msg_Packet *msg_packet, uint8_t *out_stream, size_t intended_bytes_to_read);
 #endif //MESSAGE_H

@@ -8,7 +8,7 @@
 
 
 /** 
- * A SIMULATED RTU PACKET FOR THE THERMAL UNIT
+ * @brief A simulated RTU packet for the thermal unit
  * 
  */
 typedef struct RTU_Thermal_Packet{

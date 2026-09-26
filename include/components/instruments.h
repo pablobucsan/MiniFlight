@@ -14,17 +14,19 @@
 
 #include "../common/message.h"
 #include "../common/mem_chunk.h"
+#include "../common/channel.h"
 
 #define INSTRMNT_Q_SIZE 3
 
 
-
-typedef struct InstrumentsManager{
+typedef struct Instruments_Pub{
     MemoryChunk chunk;
     uint8_t raw_data[MAX_TELEMETRY_PAYLOAD_SIZE];
-    int imu_sqn_number;
-    int thermal_sqn_number;
-}InstrumentsManager;
+
+    Channel imu_channel;
+    Channel thermal_channel;
+
+}Instruments_Pub;
 
 void init_instruments_cmpnt();
 

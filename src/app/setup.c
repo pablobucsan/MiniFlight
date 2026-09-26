@@ -8,12 +8,19 @@
 #include "../../include/components/health.h"
 #include "../../include/components/instruments.h"
 #include "../../include/bus/sw_bus.h"
+#include "../../include/components/gnc.h"
+
+
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <time.h>
 
 void initialise()
 {
+
+    /** Initialize seed for random values */
+    srand(time(NULL));
+
     /** INIT MEMORY POOL FOR THE PROGRAM */
     void *start_p = malloc(VEHICLE_MEMORY);
     if (start_p == NULL){
@@ -31,8 +38,9 @@ void initialise()
     init_swbus();
     
     /** CREATE EVERY OTHER COMPONENT, SELF REGISTER WITH THE SCHEDULER AND LOG ITSELF TO THE SOFTWARE BUS SUBSCRIPTIONS TABLE*/
-    init_instruments_cmpnt();
     init_health_cmpnt();
+    init_instruments_cmpnt();
+    init_gnc_cmpnt();
 }
 
 void run()

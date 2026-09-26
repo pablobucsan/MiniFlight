@@ -7,7 +7,7 @@
 
 
 /** 
- * A SIMULATED RTU PACKET FOR THE IMU UNIT
+ * @brief A simulated RTU packet for the IMU unit
  * 
  */
 typedef struct RTU_IMU_Packet{

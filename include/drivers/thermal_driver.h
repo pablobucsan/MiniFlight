@@ -4,7 +4,7 @@
 #define THERMAL_DRIVER_H
 
 #include "rtu_thermal.h"
-
+#include "../common/fault.h"
 /**
  * DOCUMENTATION:
  * Assume virtual microcontroller has up to 
@@ -25,6 +25,6 @@ typedef struct Thermal_Packet{
 }Thermal_Packet;
 
 
-void thermal_driver_read(MemoryChunk *thermal_chunk);
+AcquireState thermal_driver_read(MemoryChunk *thermal_chunk);
 
 #endif //THERMAL_DRIVER_H

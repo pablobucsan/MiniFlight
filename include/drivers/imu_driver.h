@@ -5,7 +5,8 @@
 
 
 #include "rtu_imu.h"
-
+#include <stdint.h>
+#include "../common/fault.h"
 
 /**
  * DOCUMENTATION:
@@ -33,7 +34,7 @@ typedef struct IMU_Packet{
 }IMU_Packet;
 
 
-void imu_driver_read(MemoryChunk *imu_chunk);
+AcquireState imu_driver_read(MemoryChunk *imu_chunk);
 
 
 #endif //IMU_DRIVER_H

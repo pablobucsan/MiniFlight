@@ -18,6 +18,7 @@
 
 #include "../common/message.h"
 #include "../common/mem_chunk.h"
+#include "../common/channel.h"
 #include <stdint.h>
 
 typedef struct SchedulerSystem SchedulerSystem;
@@ -33,11 +34,12 @@ typedef struct Health_Packet{
     HealthState thermal_state;
 }Health_Packet;
 
-typedef struct HealthManager{
-    uint16_t sqn_number;
+typedef struct Health_Pub{
     MemoryChunk chunk;
     uint8_t raw_data[MAX_TELEMETRY_PAYLOAD_SIZE];
-}HealthManager;
+
+    Channel status_channel;
+}Health_Pub;
 
 
 void init_health_cmpnt();

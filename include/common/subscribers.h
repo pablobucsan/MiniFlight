@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include "message.h"
+#include "channel.h"
 
 #define MAX_SUBSCRIPTIONS 5
 
@@ -48,13 +49,15 @@ typedef struct Subscriber{
      * has placed into the queue
      */
     Msg_Queue msg_q;
+    /**  */
+    Channel receive_channel;
 }Subscriber;
 
 Subscriber *make_subscriber(size_t capacity, Queue_Policy policy);
 void subscriber_sub_to_msg_id(Subscriber *s, MessageID msg_id);
 void subscriber_unsub_from_msg_id(Subscriber *s, MessageID msg_id);
 
-int subscriber_enqueue_msg(Subscriber *s, MemoryChunk *msg_chunk);
+void subscriber_enqueue_msg(Subscriber *s, MemoryChunk *msg_chunk);
 int subscriber_dequeue_msg(Subscriber *s, Msg_Packet *out_msg_packet);
 
 int is_subbed_to_msg_id(Subscriber *s, MessageID msg_id);

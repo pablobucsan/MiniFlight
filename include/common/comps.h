@@ -4,16 +4,16 @@
 #ifndef COMPS_H
 #define COMPS_H
 
-typedef struct SchedulerSystem SchedulerSystem;
-typedef struct HealthManager HealthManager;
-typedef struct InstrumentsManager InstrumentsManager;
-typedef struct Msg_Packet Msg_Packet;
+
 typedef struct Subscriber Subscriber;
+typedef struct Component Component;
+
 
 typedef enum ComponentID{
     CMPNT_ID_NONE = 0x0,
-    CMPNT_ID_HEALTH = 0x5,
+    CMPNT_ID_HEALTH = 0x1,
     CMPNT_ID_INSTRUMENTS = 0x2,
+    CMPNT_ID_GNC = 0x3,
 }ComponentID;
 
 
@@ -27,9 +27,8 @@ typedef struct Component{
     Subscriber *subscriber;
     /** Periodic execution handler */
     void (*tick)(Component *cmpnt);
-    void (*on_msg_received)(Component *cmpnt, Msg_Packet *msg_packet);
-    /** Private manager context */
-    void *mng;
+    /** Pointer to publisher state */
+    void *publisher;
 }Component;
 
 

@@ -47,5 +47,6 @@ void init_swbus();
 void swbus_publish(MemoryChunk *msg_chunk, MessageID msg_id);
 void swbus_log_subscriber(Subscriber *s);
 MemoryChunk *swbus_rqst_mem_chunk(size_t size);
+void swbus_release_chunk(MemoryChunk *msg_chunk);
 
 #endif //SW_BUS_H
